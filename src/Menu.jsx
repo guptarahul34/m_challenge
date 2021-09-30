@@ -6,7 +6,7 @@ import Data from './Data';
 import { Modal } from 'react-bootstrap';
 import { useHistory } from 'react-router-dom';
 
-
+let total = "";
 const style = {
     height:"60px"
 }
@@ -17,7 +17,29 @@ const Menu = () => {
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
     // let cartData = Object.values(cart);  
-    // console.log(Object.values(cart));  
+    // console.log(Object.values(cart)); 
+    const addCart = (name,price)=>{
+        if(cart[name]){
+            let i = cart[name];
+             i++;
+         //    console.log(i);
+            setCart({...cart,[name]:i})
+         }else{
+            setCart({...cart,[name]:1})
+         }
+    } 
+    const subCart = (name,price)=>{
+        if(cart[name]){
+            let i = cart[name];
+             i--;
+            setCart({...cart,[name]:i})
+         }else{
+             if(cart[name]!==0)
+               setCart({...cart,[name]:1})
+         }
+    }
+    const entries = Object.entries(cart);
+    // console.log(entries);
     return (
         <>
         <div className="container-fluid bg-primary" style={style}>
@@ -52,27 +74,12 @@ const Menu = () => {
                                         } </p> : null}
                                     
                                     <Button variant="contained" color="primary" onClick={()=>{
-                                        if(cart[name]){
-                                           let i = cart[name];
-                                            i++;
-                                        //    console.log(i);
-                                           setCart({...cart,[name]:i})
-                                           
-                                        }else{
-                                           setCart({...cart,[name]:1})
-                                        }
+                                                addCart(name,price);
                                     }}>
                                         <AddIcon/>
                                     </Button>
                                     <Button variant="contained" style={{marginLeft:"10px"}} onClick={()=>{
-                                        if(cart[name]){
-                                           let i = cart[name];
-                                            i--;
-                                           setCart({...cart,[name]:i})
-                                        }else{
-                                            if(cart[name]!==0)
-                                              setCart({...cart,[name]:1})
-                                        }
+                                       subCart(name,price);
                                     }}>
                                         <RemoveIcon/>
                                     </Button>
@@ -94,24 +101,33 @@ const Menu = () => {
                 <Modal.Body>
                     <Modal.Title>Order Summary </Modal.Title>
                  <div className="row">
-                      <div className="col-3" >
-                                <p>name</p>
-                            </div>
-                            <div className="col-3" >
-                                <p>total</p>
-                            </div>
-                            <div className="col-3">
-                            <Button variant="contained"  color="primary">
-                                <AddIcon />
-                            </Button>
-                            </div>
-                            <div className="col-3">
-                            <Button variant="contained"  color="secondary" >
-                                <RemoveIcon />
-                            </Button>
-                            </div>
+
+                        {Object.entries(cart).map((items,index)=>{
+                            return(
+                                <>
+                                <div className="col-3" key={index+1}>
+                                <p>{items[0]}</p>
+                                </div>
+                                <div className="col-3" >
+                                    <p>{items[1]}</p>
+                                </div>
+                                <div className="col-3">
+                                <Button variant="contained"  color="primary">
+                                    <AddIcon />
+                                </Button>
+                                </div>
+                                <div className="col-3">
+                                <Button variant="contained"  color="secondary" >
+                                    <RemoveIcon  />
+                                </Button>
+                                </div>
+                            </>
+                            );
+                        })}     
+                     
                  </div> 
                </Modal.Body>
+               <p>Total:(INR) : {} </p>
                 <Modal.Footer>
                 <Button variant="contained" className="offset-1" color="primary" onClick={()=>{
                         history.push("/checkout")
